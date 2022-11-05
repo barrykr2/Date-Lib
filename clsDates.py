@@ -89,14 +89,16 @@ class check_date:
         
     def __processShortCutKeys(self, date):
         # check if the date is using the prior date object to calc a new date
+        if date == 't':                             # use today's date
+            date = datetime.today().strftime(self.__setDefaultFormattedDate(''))
         if date == '.':                             # use prior date
             date = self.formattedDate
         elif date == '..':                          # prior date plus 1 day
-            dateobj = self.priorObj + timedelta(1)
-            date = dateobj.strftime(defaultFullDate)
+            dateobj = self.priorObj + timedelta(days = 1)
+            date = dateobj.strftime(self.__setDefaultFormattedDate(''))
         elif date == '--':                          # prior date less 1 day
-            dateobj = self.priorObj + timedelta(-1)
-            date = dateobj.strftime(defaultFullDate)
+            dateobj = self.priorObj + timedelta(days = -1)
+            date = dateobj.strftime(self.__setDefaultFormattedDate(''))
 
         # replace all date seperators with "-" for uniformity
         tmpDate = self.__replaceSeperators(date)
@@ -177,7 +179,7 @@ class check_date:
             if date != nullDate:
                 self.dateCheck(date, formatting)    # check date passed in
 
-            dateobj = self.dateObj + timedelta(numberOfDays)
+            dateobj = self.dateObj + timedelta(days = numberOfDays)
             self.dateCheck(dateobj.strftime(self.__setDefaultFormattedDate(formatting)), formatting)
         except Exception as e:
             self.isValid = False
