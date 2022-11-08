@@ -58,6 +58,7 @@ class check_date:
         self.dateObj = datetime.strptime(nullDate, defaultFullDate)
         self.allowShortCutKeys = allowShortCutKeys
         self.__setSelf(formatting)
+        self.messages = None
 
         if errorLogObj == None:
             self.errorLog = errorLogger.logger(defaultLogFile, defaultToStdOut)
@@ -135,6 +136,7 @@ class check_date:
                     # replace all date seperators with "-" for uniformity
                     tmpDate = self.__replaceSeperators(date)
 
+                self.messages = None
                 dayFirst = False        # US format mm-dd-yyyy
                 if self.expectedInputFormat == EF.Day_Month_Year:
                     dayFirst = True     # Australian format dd-mm-yyyy
@@ -142,12 +144,12 @@ class check_date:
                 try:# deactivate the system wide error trapping as an error
                     # is expected when an invalid date is passed in.
                     
-                    # get date object - The next line is where the actual date is validated                                                                                         is whe                                                         
+                    # get date object - The next line is where the actual date is validated.                                                       
                     self.dateObj = parse(tmpDate, dayfirst = dayFirst)
                     self.isValid = datetime.strftime(self.dateObj, defaultFullDate) != nullDate
                 except Exception as e:
                     self.isValid = False
-                    print(e)
+                    self.messages = 'Unknown date format: ' + date
 
                 # only allow dates upto 5 years in the future
                 if self.dateObj.year > datetime.today().year + 5:
@@ -161,7 +163,7 @@ class check_date:
             self.errorLog.log(e, sys.exc_info())                
 
         return self.formattedDate
-    
+        
     def formatDate(self, date = nullDate, formatting = ""):
         try:
             if date == nullDate:
